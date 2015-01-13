@@ -38,9 +38,13 @@ _usage ()
 
 # Helper function to run make_*() only one time per architecture.
 run_once() {
+    echo -n "==> Target $1 for $arch: "
     if [[ ! -e ${work_dir}/build.${1}_${arch} ]]; then
+        echo "running"
         $1
         touch ${work_dir}/build.${1}_${arch}
+    else
+        echo "skipping"
     fi
 }
 
@@ -79,9 +83,10 @@ make_setup_mkinitcpio() {
 make_customize_root_image() {
     cp -af ${script_path}/root-image ${work_dir}/${arch}
 
-    curl -o ${work_dir}/${arch}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
+    wget -O ${work_dir}/${arch}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
 
-    lynx -dump -nolist 'https://wiki.archlinux.org/index.php/Installation_Guide?action=render' >> ${work_dir}/${arch}/root-image/root/install.txt
+    lynx -dump -nolist "https://wiki.archlinux.org/index.php/Installation_Guide?action=render" >> ${work_dir}/${arch}/root-image/root/installation-guide.txt
+    lynx -dump -nolist "https://wiki.archlinux.org/index.php/Beginners'_Guide?action=render" >> ${work_dir}/${arch}/root-image/root/beginners-guide.txt
 
     setarch ${arch} mkarchiso ${verbose} -w "${work_dir}/${arch}" -C "${pacman_conf}" -D "${install_dir}" -r '/root/customize_root_image.sh' run
     rm ${work_dir}/${arch}/root-image/root/customize_root_image.sh
@@ -143,9 +148,9 @@ make_efi() {
         ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
 
     # EFI Shell 2.0 for UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=UEFI_Shell )
-    curl -o ${work_dir}/iso/EFI/shellx64_v2.efi https://svn.code.sf.net/p/edk2/code/trunk/edk2/ShellBinPkg/UefiShell/X64/Shell.efi
+    wget -O ${work_dir}/iso/EFI/shellx64_v2.efi https://svn.code.sf.net/p/edk2/code/trunk/edk2/ShellBinPkg/UefiShell/X64/Shell.efi
     # EFI Shell 1.0 for non UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=Efi-shell )
-    curl -o ${work_dir}/iso/EFI/shellx64_v1.efi https://svn.code.sf.net/p/edk2/code/trunk/edk2/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
+    wget -O ${work_dir}/iso/EFI/shellx64_v1.efi https://svn.code.sf.net/p/edk2/code/trunk/edk2/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
 }
 
 # Prepare efiboot.img::/EFI for "El Torito" EFI boot mode
