@@ -1,6 +1,7 @@
 arch-install-scripts
 b43-fwcutter
 btrfs-progs
+clonezilla
 crda
 darkhttpd
 ddrescue
@@ -19,7 +20,6 @@ gpm
 gptfdisk
 grml-zsh-config
 grub
-haveged
 hdparm
 ipw2100-fw
 ipw2200-fw
@@ -39,8 +39,8 @@ openvpn
 partclone
 parted
 partimage
-pptpclient
 ppp
+pptpclient
 rfkill
 rp-pppoe
 rsync
@@ -57,4 +57,3 @@ wpa_actiond
 wvdial
 xl2tpd
 zd1211-firmware
-zsh
